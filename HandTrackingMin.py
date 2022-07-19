@@ -26,12 +26,13 @@ while True:
     if results.multi_hand_landmarks:
         for handLms in results.multi_hand_landmarks:
             for id, lm in enumerate(handLms.landmark):
-                #print(id,lm) print landmark values
+                # print(id,lm) print landmark values
                 h, w, c = img.shape
-                cx, cy = int(lm.x*w), int(lm.y*h) # landmark value center pixel. landmark = hand points
-                print(id, cx,cy)
-                if id == 0: # imprimimos el lm con id = 0
-                    cv2.circle(img, (cx,cy), 15, (255,0,255), cv2.FILLED)
+                # landmark value center pixel. landmark = hand points
+                cx, cy = int(lm.x*w), int(lm.y*h)
+                print(id, cx, cy)
+                if id == 0:  # imprimimos el lm con id = 0
+                    cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
             # draw the conections between the hand points
             mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
@@ -41,7 +42,7 @@ while True:
     pTime = cTime
 
     # print the fps
-    cv2.putText(img, str(int(fps)),(10,70), cv2.FONT_HERSHEY_PLAIN,
+    cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN,
                 3, (255, 0, 255, 3))
 
     cv2.imshow("Image", img)

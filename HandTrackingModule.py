@@ -10,7 +10,8 @@ class handDetector():
         self.detectionCon = detectionCon
         self.trackCon = trackCon
         self.mpHands = mp.solutions.hands
-        self.hands = self.mpHands.Hands(self.mode, self.maxHands, 1, self.detectionCon, self.trackCon)
+        self.hands = self.mpHands.Hands(
+            self.mode, self.maxHands, 1, self.detectionCon, self.trackCon)
 
         self.mpDraw = mp.solutions.drawing_utils  # draw the hands points on the images
 
@@ -25,22 +26,23 @@ class handDetector():
                     self.mpDraw.draw_landmarks(
                         img, handLms, self.mpHands.HAND_CONNECTIONS)
 
-        return img                
+        return img
 
     def findPosition(self, img, handNo=0, draw=True):
 
-        lmList=[]
+        lmList = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNo]
             for id, lm in enumerate(myHand.landmark):
-                    #print(id,lm) print landmark values
-                    h, w, c = img.shape
-                    cx, cy = int(lm.x*w), int(lm.y*h) # landmark value center pixel. landmark = hand points
-                    lmList.append([id,cx,cy])
-                    if draw:
-                        cv2.circle(img, (cx,cy), 7, (255,0,0), cv2.FILLED)
+                # print(id,lm) print landmark values
+                h, w, c = img.shape
+                # landmark value center pixel. landmark = hand points
+                cx, cy = int(lm.x*w), int(lm.y*h)
+                lmList.append([id, cx, cy])
+                if draw:
+                    cv2.circle(img, (cx, cy), 7, (255, 0, 0), cv2.FILLED)
 
-        return lmList            
+        return lmList
 
 
 def main():
@@ -53,11 +55,11 @@ def main():
         # Press Q on keyboard to  exit
         if cv2.waitKey(25) & 0xFF == ord('q'):
             break
-        
+
         success, img = cap.read()
         img = detector.findHands(img)
         lmList = detector.findPosition(img)
-        if len(lmList)!= 0:
+        if len(lmList) != 0:
             print(lmList[4])
 
         cTime = time.time()
