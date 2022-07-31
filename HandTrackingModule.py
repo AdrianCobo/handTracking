@@ -15,6 +15,8 @@ class handDetector():
 
         self.mpDraw = mp.solutions.drawing_utils  # draw the hands points on the images
 
+        self.tipIds = [4, 8, 12, 16, 20]  # finger landmarks id tips
+
     def findHands(self, img, draw=True):
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.hands.process(imgRGB)
@@ -30,7 +32,7 @@ class handDetector():
 
     def findPosition(self, img, handNo=0, draw=True):
 
-        lmList = []
+        self.lmList = []
         if self.results.multi_hand_landmarks:
             myHand = self.results.multi_hand_landmarks[handNo]
             for id, lm in enumerate(myHand.landmark):
@@ -38,11 +40,29 @@ class handDetector():
                 h, w, c = img.shape
                 # landmark value center pixel. landmark = hand points
                 cx, cy = int(lm.x*w), int(lm.y*h)
-                lmList.append([id, cx, cy])
+                self.lmList.append([id, cx, cy])
                 if draw:
                     cv2.circle(img, (cx, cy), 7, (255, 0, 0), cv2.FILLED)
 
-        return lmList
+        return self.lmList
+
+    def fingersUp(self):  # just correctly detect the thumb depending of the hand orientation
+        fingers = []
+
+        # Thumb (this condition is for the right hand).
+        # You can check what hand it's and and adapt the code
+        if self.lmList[self.tipIds[0]][1] > self.lmList[self.tipIds[0]-1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+
+        # rest fingers
+        for id in range(1, 5):
+            if self.lmList[self.tipIds[id]][2] < self.lmList[self.tipIds[id]-2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+        return fingers
 
 
 def main():
@@ -61,6 +81,7 @@ def main():
         lmList = detector.findPosition(img)
         if len(lmList) != 0:
             print(lmList[4])
+            print(detector.fingersUp())
 
         cTime = time.time()
         fps = 1/(cTime-pTime)
